@@ -1,0 +1,114 @@
+/* --- Variables CSS para una paleta de 8 bits --- */
+:root {
+    --color-dark-bg: #1a1a2e;     /* Azul/morado oscuro */
+    --color-medium-bg: #21213e;   /* Azul/morado más claro */
+    --color-accent-green: #00ff00; /* Verde neón (para títulos) */
+    --color-accent-magenta: #ff00ff; /* Magenta neón (para texto IA) */
+    --color-text-light: #e0e0e0;   /* Texto general claro */
+    --color-text-medium: #a0a0a0;  /* Texto reflexivo */
+    --color-border: #4a4a6e;      /* Borde sutil */
+}
+
+/* --- Estilos Generales --- */
+body {
+    font-family: 'VT323', monospace;
+    background-color: var(--color-dark-bg);
+    color: var(--color-text-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    text-align: center;
+    overflow: hidden; /* Evita barras de scroll */
+    
+    /* Patrón de rejilla sutil para el fondo */
+    background-image: 
+        linear-gradient(0deg, transparent 24%, var(--color-medium-bg) 25%, var(--color-medium-bg) 26%, transparent 27%, transparent 74%, var(--color-medium-bg) 75%, var(--color-medium-bg) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, var(--color-medium-bg) 25%, var(--color-medium-bg) 26%, transparent 27%, transparent 74%, var(--color-medium-bg) 75%, var(--color-medium-bg) 76%, transparent 77%, transparent);
+    background-size: 50px 50px; /* Tamaño de las celdas de la rejilla */
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px; /* Más espacio entre elementos principales */
+    background-color: var(--color-dark-bg); /* Asegura que el contenedor principal cubra el patrón */
+    padding: 30px;
+    border-radius: 10px;
+    border: 2px solid var(--color-border);
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); /* Resplandor neón */
+}
+
+h1 {
+    font-size: 3.5rem; /* Más grande */
+    color: var(--color-accent-green);
+    text-shadow: 3px 3px var(--color-dark-bg);
+    margin: 0;
+    letter-spacing: 5px; /* Espaciado de letras */
+}
+
+.reflection {
+    font-size: 1.4rem; /* Más grande */
+    color: var(--color-text-medium);
+    margin-top: -15px;
+    margin-bottom: 10px;
+}
+
+/* --- Panel de Información (Contador + Texto IA) --- */
+#info-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--color-medium-bg);
+    border: 1px solid var(--color-border);
+    padding: 15px 25px;
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0, 255, 0, 0.2);
+    min-width: 300px; /* Ancho mínimo para consistencia */
+}
+
+#counter {
+    font-size: 1.8rem; /* Más grande */
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+#ai-text-container {
+    height: 40px; /* Altura fija para que el layout no "salte" */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Ocupa todo el ancho del panel */
+}
+
+#ai-text {
+    font-size: 1.5rem; /* Más grande */
+    color: var(--color-accent-magenta);
+    opacity: 0; /* Inicia invisible */
+    transition: opacity 0.3s ease-in-out; /* Transición para el fade */
+    text-shadow: 1px 1px #000;
+}
+
+/* --- El Gato Principal --- */
+#cat-image {
+    width: 256px; /* ¡El doble de tamaño! */
+    height: 256px;
+    cursor: pointer;
+    image-rendering: pixelated; 
+    transition: transform 0.1s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: 2px solid var(--color-border); /* Borde alrededor del gato */
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.4); /* Resplandor magenta */
+    border-radius: 5px;
+}
+
+#cat-image:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.6); /* Más resplandor al pasar el ratón */
+}
+
+#cat-image:active {
+    transform: scale(0.97); /* Efecto de "presionado" */
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+}
