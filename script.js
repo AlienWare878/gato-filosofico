@@ -5,7 +5,7 @@ const counterDisplay = document.getElementById('counter');
 
 let clickCount = 0;
 let audioEnabled = false;
-let isCooldown = false;
+let currentTextTimeout = null; // Para controlar el timeout actual
 
 const clickSound = new Audio('assets/audio/boop.wav'); 
 clickSound.volume = 0.5; 
@@ -122,11 +122,6 @@ const FALLBACK_PHRASES = [
 // --- 2. FUNCIÓN PRINCIPAL DE CLIC ---
 
 function handleClick() {
-    if (isCooldown) {
-        showCooldownMessage();
-        return;
-    }
-
     if (!audioEnabled) {
         audioEnabled = true;
     }
@@ -135,40 +130,8 @@ function handleClick() {
     counterDisplay.textContent = `Clics: ${clickCount}`;
     
     updateCatSprite();
-    activateCooldown();
     displayPhilosophicalQuote();
     playClickSound();
-}
-
-/**
- * Muestra mensaje cuando se intenta hacer clic durante el cooldown
- */
-function showCooldownMessage() {
-    const originalText = aiTextDisplay.textContent;
-    const originalOpacity = aiTextDisplay.style.opacity;
-    
-    aiTextDisplay.textContent = "⏳ Reflexiona sobre la frase anterior...";
-    aiTextDisplay.style.opacity = "1";
-    
-    setTimeout(() => {
-        aiTextDisplay.textContent = originalText;
-        aiTextDisplay.style.opacity = originalOpacity;
-    }, 1500);
-}
-
-/**
- * Activa el periodo de cooldown donde no se pueden hacer más clics
- */
-function activateCooldown() {
-    isCooldown = true;
-    catImage.style.cursor = "not-allowed";
-    catImage.style.opacity = "0.7";
-    
-    setTimeout(() => {
-        isCooldown = false;
-        catImage.style.cursor = "pointer";
-        catImage.style.opacity = "1";
-    }, 10000);
 }
 
 /**
@@ -176,10 +139,11 @@ function activateCooldown() {
  */
 function calculateDisplayTime(text) {
     const wordCount = text.split(' ').length;
-    const baseTime = 8000;
+    const baseTime = 10000; // 10 segundos base (aumentado)
     
+    // Añadir 300ms por palabra después de las primeras 10 palabras
     if (wordCount > 10) {
-        return baseTime + ((wordCount - 10) * 200);
+        return baseTime + ((wordCount - 10) * 300);
     }
     
     return baseTime;
@@ -189,6 +153,12 @@ function calculateDisplayTime(text) {
  * Obtiene una frase filosófica en español de APIs confiables
  */
 async function displayPhilosophicalQuote() {
+    // Limpiar timeout anterior si existe
+    if (currentTextTimeout) {
+        clearTimeout(currentTextTimeout);
+    }
+
+    // Mostrar mensaje de carga
     aiTextDisplay.textContent = "El gato reflexiona...";
     aiTextDisplay.style.opacity = "1";
 
@@ -236,12 +206,16 @@ function showPhrase(text, author = null) {
     const displayText = author ? `"${philosophicalText}" - ${author}` : `"${philosophicalText}"`;
     const displayTime = calculateDisplayTime(displayText);
     
+    // Mostrar la nueva frase
     aiTextDisplay.textContent = displayText;
+    aiTextDisplay.style.opacity = "1";
     
-    setTimeout(() => {
-        if (aiTextDisplay.textContent.includes(philosophicalText)) {
-            aiTextDisplay.style.opacity = "0";
-        }
+    console.log(`Frase mostrada por ${displayTime/1000} segundos (${displayText.split(' ').length} palabras)`);
+    
+    // Programar el ocultamiento después del tiempo calculado
+    currentTextTimeout = setTimeout(() => {
+        aiTextDisplay.style.opacity = "0";
+        currentTextTimeout = null;
     }, displayTime);
 }
 
@@ -308,9 +282,11 @@ function useLocalFallback() {
     const displayTime = calculateDisplayTime(fallbackText);
     
     aiTextDisplay.textContent = fallbackText;
+    aiTextDisplay.style.opacity = "1";
     
-    setTimeout(() => {
+    currentTextTimeout = setTimeout(() => {
         aiTextDisplay.style.opacity = "0";
+        currentTextTimeout = null;
     }, displayTime);
 }
 
