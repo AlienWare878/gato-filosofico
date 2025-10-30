@@ -5,7 +5,7 @@ const counterDisplay = document.getElementById('counter');
 
 let clickCount = 0;
 let audioEnabled = false;
-let currentTextTimeout = null; // Para controlar el timeout actual
+let currentTextTimeout = null;
 
 const clickSound = new Audio('assets/audio/boop.wav'); 
 clickSound.volume = 0.5; 
@@ -139,7 +139,7 @@ function handleClick() {
  */
 function calculateDisplayTime(text) {
     const wordCount = text.split(' ').length;
-    const baseTime = 10000; // 10 segundos base (aumentado)
+    const baseTime = 10000; // 10 segundos base
     
     // Añadir 300ms por palabra después de las primeras 10 palabras
     if (wordCount > 10) {
@@ -156,6 +156,7 @@ async function displayPhilosophicalQuote() {
     // Limpiar timeout anterior si existe
     if (currentTextTimeout) {
         clearTimeout(currentTextTimeout);
+        currentTextTimeout = null;
     }
 
     // Mostrar mensaje de carga
