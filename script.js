@@ -5,7 +5,7 @@ const counterDisplay = document.getElementById('counter');
 
 let clickCount = 0;
 let audioEnabled = false;
-let currentTextTimeout = null;
+let isShowingText = false; // Controla si ya hay una frase mostrándose
 
 const clickSound = new Audio('assets/audio/boop.wav'); 
 clickSound.volume = 0.5; 
@@ -130,8 +130,12 @@ function handleClick() {
     counterDisplay.textContent = `Clics: ${clickCount}`;
     
     updateCatSprite();
-    displayPhilosophicalQuote();
     playClickSound();
+    
+    // Solo procesar nueva frase si no hay una mostrándose
+    if (!isShowingText) {
+        displayPhilosophicalQuote();
+    }
 }
 
 /**
@@ -153,11 +157,8 @@ function calculateDisplayTime(text) {
  * Obtiene una frase filosófica en español de APIs confiables
  */
 async function displayPhilosophicalQuote() {
-    // Limpiar timeout anterior si existe
-    if (currentTextTimeout) {
-        clearTimeout(currentTextTimeout);
-        currentTextTimeout = null;
-    }
+    // Marcar que ya hay una frase mostrándose
+    isShowingText = true;
 
     // Mostrar mensaje de carga
     aiTextDisplay.textContent = "El gato reflexiona...";
@@ -214,9 +215,10 @@ function showPhrase(text, author = null) {
     console.log(`Frase mostrada por ${displayTime/1000} segundos (${displayText.split(' ').length} palabras)`);
     
     // Programar el ocultamiento después del tiempo calculado
-    currentTextTimeout = setTimeout(() => {
+    setTimeout(() => {
         aiTextDisplay.style.opacity = "0";
-        currentTextTimeout = null;
+        // Permitir nueva frase solo después de que termine esta
+        isShowingText = false;
     }, displayTime);
 }
 
@@ -285,9 +287,9 @@ function useLocalFallback() {
     aiTextDisplay.textContent = fallbackText;
     aiTextDisplay.style.opacity = "1";
     
-    currentTextTimeout = setTimeout(() => {
+    setTimeout(() => {
         aiTextDisplay.style.opacity = "0";
-        currentTextTimeout = null;
+        isShowingText = false;
     }, displayTime);
 }
 
